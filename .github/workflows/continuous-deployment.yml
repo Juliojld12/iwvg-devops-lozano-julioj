@@ -4,6 +4,7 @@ on:
     branches: ['master']
 
 env:
+  REPOSITORY: ${{ github.repository }} # <user>/<repo>
   GHCR_URL: ghcr.io # GitHub Container Registry
 
 jobs:
@@ -27,14 +28,7 @@ jobs:
         run: |
           echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_ENV
           echo "ARTIFACT=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_ENV
-          echo "OWNER_LC=${GITHUB_REPOSITORY_OWNER,,}" >> $GITHUB_ENV
-          echo "NAME_LC=$(echo "$ARTIFACT" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-          echo "REPOSITORY=${OWNER_LC}/${NAME_LC}" >> $GITHUB_ENV
-          echo "IMAGE=${{ env.GHCR_URL }}/${OWNER_LC}/${NAME_LC}:${VERSION}" >> $GITHUB_ENV
-          echo "IMAGE_LATEST=${{ env.GHCR_URL }}/${OWNER_LC}/${NAME_LC}:latest" >> $GITHUB_ENV
 
-      # PAT con permisos: write:packages, read:packages, delete:packages, repo
-      # Guardado como secret: GHCR_PERSONAL_ACCESS_TOKEN
       - name: 📦 Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
@@ -48,12 +42,9 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ env.IMAGE }}
-            ${{ env.IMAGE_LATEST }}
+            ${{ env.GHCR_URL }}/${{ env.REPOSITORY }}:${{ env.VERSION }}
+            ${{ env.GHCR_URL }}/${{ env.REPOSITORY }}:latest
 
-      # 🌐 Render Deployment
-      # 1. En Render: Settings → Deploy Hook → copiar el token
-      # 2. En GitHub: Settings → Secrets and variables → Actions → crear secret: RENDER_DEPLOY_HOOK_TOKEN
       - name: 🚀 Deploy on Render
         run: |
           curl --fail -X POST "https://api.render.com/deploy/${{ secrets.RENDER_DEPLOY_HOOK_TOKEN }}" \
