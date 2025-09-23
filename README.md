@@ -1,3 +1,4 @@
 [![CI](https://github.com/Juliojld12/iwvg-devops-lozano-julioj/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/Juliojld12/iwvg-devops-lozano-julioj/actions/workflows/continuous-integration.yml)
 
 [![CI](https://github.com/Juliojld12/iwvg-devops-lozano-julioj/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/Juliojld12/iwvg-devops-lozano-julioj/actions/workflows/continuous-integration.yml)
+
