@@ -61,8 +61,8 @@ jobs:
           cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
 
       # Guarda en GitHub -> Settings -> Secrets -> Actions: RENDER_DEPLOY_HOOK con la URL COMPLETA
-      - name: 🚀 Trigger Render Deploy Hook
-        if: ${{ secrets.RENDER_DEPLOY_HOOK != '' }}
+      - name: 🚀 Deploy on Render
         run: |
-          curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
-          echo "Render deploy hook triggered."
+          curl --fail -X POST "https://api.render.com/deploy/${{ secrets.RENDER_DEPLOY_HOOK_TOKEN }}" \
+          && echo "✅ Deployment succeeded" \
+          || (echo "❌ Deployment failed" && exit 1)
