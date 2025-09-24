@@ -1,7 +1,7 @@
 name: CI
 on:
   push:
-    branches: [develop,release-*]
+    branches: [develop, release-*]
 
 jobs:
   devops:
@@ -34,7 +34,7 @@ jobs:
           languages: java
           queries: security-extended
 
-      - name: ✅ Run Unit & Integration Test & Functional Test
+      - name: ✅ Run Unit & Integration Test & Generate Coverage
         run: mvn -B verify
 
       - name: 🔍 CodeQL Analysis
@@ -42,12 +42,13 @@ jobs:
         with:
           category: "/language:java"
 
-      - name: 📊 Sonar Analysis
+      - name: 📊 SonarCloud Analysis
         run: >
           mvn -B sonar:sonar
           -Dsonar.projectKey=Juliojld12_iwvg-devops-lozano-julioj
           -Dsonar.organization=juliojld12
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+          -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
