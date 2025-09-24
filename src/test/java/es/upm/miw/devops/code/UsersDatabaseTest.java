@@ -35,4 +35,21 @@ public class UsersDatabaseTest {
         long count = db.stream().count();
         assertEquals(5, count);
     }
+
+    @Test
+    void testFindFractionAdditionByUserId() {
+        UsersDatabase db = new UsersDatabase();
+
+        Fraction result = db.findFractionAdditionByUserId("1");
+        assertEquals(new Fraction(5, 6), result);
+
+    }
+    @Test
+    void testFindFractionDivisionByUserId() {
+        UsersDatabase db = new UsersDatabase();
+
+        Fraction result = db.findFractionDivisionByUserId("1");
+
+        assertEquals(new Fraction(3, 2), result);
+    }
 }
