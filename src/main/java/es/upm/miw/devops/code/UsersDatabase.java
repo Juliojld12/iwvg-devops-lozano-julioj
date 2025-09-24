@@ -28,6 +28,14 @@ public class UsersDatabase {
                 .filter(user -> user.getId().equals(id))
                 .findFirst();
     }
+    public Fraction findFractionAdditionByUserId(String id) {
+        return this.users.stream()
+                .filter(user -> user.getId().equals(id))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + id))
+                .getFractions().stream()
+                .reduce(new Fraction(0, 1), Fraction::add);
+    }
 
     public Stream<User> stream() {
         return this.users.stream();

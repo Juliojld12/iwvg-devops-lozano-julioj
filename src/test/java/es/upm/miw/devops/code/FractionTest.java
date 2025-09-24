@@ -97,4 +97,5 @@ public class FractionTest {
     void testDivideByZero() {
         assertThrows(ArithmeticException.class, () -> new Fraction(1, 2).divide(new Fraction(0, 3)));
     }
+
 }
