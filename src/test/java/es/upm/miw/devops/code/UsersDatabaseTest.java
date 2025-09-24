@@ -41,7 +41,15 @@ public class UsersDatabaseTest {
         UsersDatabase db = new UsersDatabase();
 
         Fraction result = db.findFractionAdditionByUserId("1");
-        assertEquals(new Fraction(5, 6), result); // <- aquí está el fix
+        assertEquals(new Fraction(5, 6), result);
 
+    }
+    @Test
+    void testFindFractionDivisionByUserId() {
+        UsersDatabase db = new UsersDatabase();
+
+        Fraction result = db.findFractionDivisionByUserId("1");
+
+        assertEquals(new Fraction(3, 2), result);
     }
 }

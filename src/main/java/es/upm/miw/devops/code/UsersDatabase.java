@@ -36,6 +36,13 @@ public class UsersDatabase {
                 .getFractions().stream()
                 .reduce(new Fraction(0, 1), Fraction::add);
     }
+    public Fraction findFractionDivisionByUserId(String id) {
+        return this.findUserById(id)
+                .orElseThrow(() -> new IllegalArgumentException("User not found: " + id))
+                .getFractions().stream()
+                .reduce((a, b) -> a.divide(b))
+                .orElse(new Fraction(1, 1)); // Si no hay fracciones
+    }
 
     public Stream<User> stream() {
         return this.users.stream();
