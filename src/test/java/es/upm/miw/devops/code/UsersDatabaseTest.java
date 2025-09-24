@@ -36,6 +36,7 @@ public class UsersDatabaseTest {
         assertEquals(5, count);
     }
 
+
     @Test
     void testFindFractionAdditionByUserId() {
         UsersDatabase db = new UsersDatabase();
