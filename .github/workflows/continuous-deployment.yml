@@ -28,8 +28,12 @@ jobs:
           java-version: 21
           cache: maven
 
+      - name: 🔧 Set up Buildx (docker-container driver)
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver: docker-container
+
       - name: 🏷️ Read version/artifact and compose image tags (lowercase owner/repo)
-        id: meta
         run: |
           VERSION=$(mvn -q help:evaluate -Dexpression=project.version -DforceStdout)
           ARTIFACT=$(mvn -q help:evaluate -Dexpression=project.artifactId -DforceStdout)
@@ -49,7 +53,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🐳 Build & Push (version + latest)
+      - name: 🐳 Build & Push (version + latest) with GHA cache
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -57,12 +61,16 @@ jobs:
           tags: |
             ${{ env.IMAGE_VERSION }}
             ${{ env.IMAGE_LATEST }}
-          cache-from: type=registry,ref=${{ env.IMAGE }}:buildcache
-          cache-to: type=registry,ref=${{ env.IMAGE }}:buildcache,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # Guarda en GitHub -> Settings -> Secrets -> Actions: RENDER_DEPLOY_HOOK con la URL COMPLETA
-      - name: 🚀 Deploy on Render
+      # Guarda en GitHub → Settings → Secrets and variables → Actions:
+      # RENDER_DEPLOY_HOOK con la URL COMPLETA del hook (no solo el token)
+      - name: 🚀 Trigger Render Deploy Hook
         run: |
-          curl --fail -X POST "https://api.render.com/deploy/${{ secrets.RENDER_DEPLOY_HOOK_TOKEN }}" \
-          && echo "✅ Deployment succeeded" \
-          || (echo "❌ Deployment failed" && exit 1)
+          if [ -n "${{ secrets.RENDER_DEPLOY_HOOK }}" ]; then
+            curl -fsS -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+            echo "Render deploy hook triggered."
+          else
+            echo "⚠️ No RENDER_DEPLOY_HOOK secret set; skipping."
+          fi
